@@ -6,46 +6,27 @@ var app = require('http').createServer(handler),
   PwmDriver = require("adafruit-i2c-pwm-driver")
 
 
-// ----------------------------------------------------------------------------
-// server (pwm) driver hardware setup
-// ----------------------------------------------------------------------------
-
 pwm = new PwmDriver  0x40 '/dev/i2c-1'
-var pwm_freq = 60;
-var pwm_us_per_bit = 1000/pwm_freq/4096;
+servoMin = 150;
+servoMax = 600;
 
-pwm.setPWMFreq(pwm_freq);
-
-// https://learn.adafruit.com/adafruit-16-channel-servo-driver-with-raspberry-pi/library-reference
-// want to vary pulse from 1ms [0.001sec] (0deg) to 2ms (180deg)
-// ms_per_bit = (1000 ms per second) / (60Hz per period) / 4096 (bits)
-// => 0.00406901041667 ms per bit
-// angle = 45deg
-// pulse_ms = (angle/180 + 1)
-// pulse_bits = pulse_ms / ms_per_bit
-
-// (  0/180+1)/0.00406901041667 = 245.8 bits
-// ( 90/180+1)/0.00406901041667 = 368.6 bits
-// (180/180+1)/0.00406901041667 = 491.5 bits
-
-// 245.8/4096*(1/60)*1000 = 1.0 ms
-// 368.6/4096*(1/60)*1000 = 1.5 ms
-// 491.5/4096*(1/60)*1000 = 2.0 ms
-
-setServoAngle = function(channel, angle) { //angle in deg 0 to 180
-  var pulse = (angle/180+1)/pwm_us_per_bit;
+setServoPulse = function(channel, pulse) {
+  var pulseLength;
+  pulseLength = 1000000;
+  pulseLength /= 60;
+  print("%d us per period" % pulseLength);
+  pulseLength /= 4096;
+  print("%d us per bit" % pulseLength);
+  pulse *= 1000;
+  pulse /= pulseLength;
   return pwm.setPWM(channel, 0, pulse);
 };
 
-
-setServoAngle(0,45);
-setServoAngle(1,15);
-setServoAngle(2,120);
-setServoAngle(3,170);
+pwm.setPWMFreq(60) ;
 
 
 // ----------------------------------------------------------------------------
-// dc motor driver hardware setup
+// DC Motor Driver hardware setup
 // ----------------------------------------------------------------------------
 // GPIO4, 17
 // GPIO14, 15
