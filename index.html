@@ -1,0 +1,155 @@
+<html>
+<head>
+<style>
+#forward {
+    width: 40%;
+	height: 50%;
+    padding: 0px;
+    margin: 0px;
+	background-color: green;
+	position: absolute;
+	top: 0px;
+	left: 30%;
+}
+#backward {
+    width: 40%;
+	height: 50%;
+    padding: 0px;
+    margin: 0px;
+	background-color: red;
+	position: absolute;
+	top: 50%;
+	left: 30%;
+}
+#left {
+    width: 30%;
+	height: 100%;
+    padding: 0px;
+    margin: 0px;
+	background-color: blue;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+#right {
+    width: 30%;
+	height: 100%;
+    padding: 0px;
+    margin: 0px;
+	background-color: blue;
+	position: absolute;
+	top: 0px;
+	left: 70%;
+}
+</style>
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/jquery.mobile-1.4.3.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+$(document).ready(function(){
+	$("div").disableSelection();
+});
+
+var socket = io.connect(document.location.href);
+
+$(document).keydown(function(event){
+  switch (event.keyCode) {
+    // http://api.jquery.com/keyup/
+    case 37: //left
+      socket.emit('button update event', { direction: 'left', speed: 80 });
+      break
+    case 38: //up
+      socket.emit('button update event', { direction: 'forward', speed: 80 });
+      break;
+    case 39: //right
+      socket.emit('button update event', { direction: 'right', speed: 80 });
+      break;
+    case 40: //down
+      socket.emit('button update event', { direction: 'backward', speed: 80 });
+      break;
+    case 87: //w
+      socket.emit('button update event', { direction: 'forward', speed: 80 });
+      break;
+    case 65: //a
+      socket.emit('button update event', { direction: 'left', speed: 80 });
+      break;
+    case 83: //s
+      socket.emit('button update event', { direction: 'backward', speed: 80 });
+      break;
+    case 68: //d
+      socket.emit('button update event', { direction: 'right', speed: 80 });
+      break;
+}});
+
+$(document).keyup(function(event){
+  switch (event.keyCode) {
+    // http://api.jquery.com/keyup/
+    case 37: //left
+      socket.emit('button update event', { direction: 'left', speed: 0 });
+      break
+    case 38: //up
+      socket.emit('button update event', { direction: 'forward', speed: 0 });
+      break;
+    case 39: //right
+      socket.emit('button update event', { direction: 'right', speed: 0 });
+      break;
+    case 40: //down
+      socket.emit('button update event', { direction: 'backward', speed: 0 });
+      break;
+    case 87: //w
+      socket.emit('button update event', { direction: 'forward', speed: 0 });
+      break;
+    case 65: //a
+      socket.emit('button update event', { direction: 'left', speed: 0 });
+      break;
+    case 83: //s
+      socket.emit('button update event', { direction: 'backward', speed: 0 });
+      break;
+    case 68: //d
+      socket.emit('button update event', { direction: 'right', speed: 0 });
+      break;
+}});
+
+
+
+  
+</script>
+</head>
+
+<body>
+
+<div id="right"></div>
+<div id="forward"></div>
+<div id="backward"></div>
+<div id="left"></div>
+
+<script>
+
+$( "#forward" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'forward', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+	socket.emit('button update event', { direction: 'forward', speed: 80 });
+  });
+$( "#backward" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'backward', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+	socket.emit('button update event', { direction: 'backward', speed: 80 });
+  });
+$( "#left" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'left', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+	socket.emit('button update event', { direction: 'left', speed: 80 });
+  });
+$( "#right" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'right', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+	socket.emit('button update event', { direction: 'right', speed: 80 });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+var app = require('http').createServer(handler)
+  , io = require('socket.io').listen(app)
+  , fs = require('fs')
+  , url= require('url')
+  , gpio = require("pi-gpio")
+  , sp = require("serialport")
+
+
+//init for SerialPort connected to Arduino
+var SerialPort = sp.SerialPort
+var serialPort = new SerialPort('/dev/ttyAMA0', 
+    {   baudrate: 9600,
+        dataBits: 8,
+        parity: 'none',
+        stopBits: 1,
+        flowControl: false
+    });
+    
+serialPort.on("open", function () {
+    console.log('serialPort open');
+    serialPort.write("start");
+});
+
+
+// Close IO pin in case it has been left open.
+gpio.close(11);	
+gpio.close(26);
+gpio.close(29);
+gpio.close(33);
+gpio.close(40);
+// Open IO pin
+
+gpio.open(11, "output", function(err) {// Open pin 11 for output	
+// do nothing
+});
+
+gpio.open(26, "output", function(err) {
+//
+});
+
+gpio.open(29, "output", function(err) {
+//
+});
+
+gpio.open(33, "output", function(err) {
+//
+});
+
+gpio.open(40, "output", function(err) {
+//
+});
+
+
+
+// Start webserver
+app.listen(8080);
+
+
+function handler (req, res) {
+
+  // Using URL to parse the requested URL
+    var path = url.parse(req.url).pathname;
+
+    // Managing the root route
+    if (path == '/') {
+        index = fs.readFile(__dirname+'/index.html', 
+            function(error,data) {
+
+                if (error) {
+                    res.writeHead(500);
+                    return res.end("Error: unable to load index.html");
+                }
+
+                res.writeHead(200,{'Content-Type': 'text/html'});
+                res.end(data);
+            });
+    // Managing the route for the javascript files
+    } else if( /\.(js)$/.test(path) ) {
+        index = fs.readFile(__dirname+'/'+path, 
+            function(error,data) {
+
+                if (error) {
+                    res.writeHead(500);
+                    return res.end("Error: unable to load " + path);
+                }
+
+                res.writeHead(200,{'Content-Type': 'text/javascript'});
+                res.end(data);
+            });
+    } else {
+        res.writeHead(404);
+        res.end("Error: 404 - File not found.");
+    }
+
+}
+
+//right motor = 0x10
+//left motor = 0x12
+var motor = {
+	right: 1,
+	left: 2
+	};
+var forward = 1
+var backward = 0
+var maxspeed = 128
+
+io.sockets.on('connection', function (socket) {
+  socket.on('button update event', function (data) {
+	console.log(data.direction);
+	console.log(data.speed);
+	buf = new Buffer(2);
+	if (data.direction=="left") {
+		gpio.write(26, Math.ceil(data.speed/100), function() {});
+		buf[0] = motor.right;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | forward;
+		serialPort.write(buf);
+		buf[0] = motor.left;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | backward;
+		serialPort.write(buf);
+	}
+	if (data.direction=="right") {
+		gpio.write(29, Math.ceil(data.speed/100), function() {});
+		buf[0] = motor.right;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | backward;
+		serialPort.write(buf);
+		buf[0] = motor.left;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | forward;
+		serialPort.write(buf);
+	}
+	if (data.direction=="forward") {
+		gpio.write(33, Math.ceil(data.speed/100), function() {});
+		buf[0] = motor.right;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | forward;
+		serialPort.write(buf);
+		buf[0] = motor.left;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | forward;
+		serialPort.write(buf);
+	}
+	if (data.direction=="backward") {
+		gpio.write(40, Math.ceil(data.speed/100), function() {});
+		buf[0] = motor.right;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | backward;
+		serialPort.write(buf);
+		buf[0] = motor.left;
+		buf[1] = Math.round(data.speed*maxspeed/100)<<1 | backward;
+		serialPort.write(buf);
+	}
+  });
+});
