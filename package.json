@@ -1,0 +1,13 @@
+{
+  "name": "kaylins_robot",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "socket.io": "*",
+    "wiring-pi": "*",
+    "adafruit-i2c-pwm-driver": "*"
+  }
+}
