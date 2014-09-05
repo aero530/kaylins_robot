@@ -10,7 +10,7 @@ var app = require('http').createServer(handler),
 // server (pwm) driver hardware setup
 // ----------------------------------------------------------------------------
 
-pwm = new PwmDriver  0x40 '/dev/i2c-1'
+pwm = new PwmDriver(0x40,'/dev/i2c-1');
 var pwm_freq = 60;
 var pwm_us_per_bit = 1000/pwm_freq/4096;
 
@@ -39,9 +39,10 @@ setServoAngle = function(channel, angle) { //angle in deg 0 to 180
 
 
 setServoAngle(0,45);
-setServoAngle(1,15);
-setServoAngle(2,120);
-setServoAngle(3,170);
+
+setServoAngle(0,15);
+
+
 
 
 // ----------------------------------------------------------------------------
@@ -144,12 +145,14 @@ io.sockets.on('connection', function (socket) {
 		}
 	}
 	if (data.direction=="forward") {
-			if (data.speed <= 5) {
+		if (data.speed <= 5) {
+			setServoAngle(0,15);
 			wpi.digitalWrite(pin1, 0);
 			wpi.digitalWrite(pin2, 0);
 			wpi.digitalWrite(pin3, 0);
 			wpi.digitalWrite(pin4, 0);
 		} else {
+			setServoAngle(0,90);
 			wpi.digitalWrite(pin1, 1);
 			wpi.digitalWrite(pin2, 0);
 			wpi.digitalWrite(pin3, 1);
