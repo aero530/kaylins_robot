@@ -62,6 +62,47 @@ wpi.pinMode(pin2, wpi.modes.OUTPUT);
 wpi.pinMode(pin3, wpi.modes.OUTPUT);
 wpi.pinMode(pin4, wpi.modes.OUTPUT);
 
+var enable_pin = 25;
+var reset_pin = 8;
+var sleep_pin = 24;
+var step_pin = 18;
+var direction_pin = 23;
+var ms1_pin = 10;
+var ms2_pin = 9;
+var ms3_pin = 11;
+
+wpi.pinMode(enable_pin, wpi.modes.OUTPUT);
+wpi.pinMode(reset_pin, wpi.modes.OUTPUT);
+wpi.pinMode(sleep_pin, wpi.modes.OUTPUT);
+wpi.pinMode(step_pin, wpi.modes.OUTPUT);
+wpi.pinMode(direction_pin, wpi.modes.OUTPUT);
+wpi.pinMode(ms1_pin, wpi.modes.OUTPUT);
+wpi.pinMode(ms2_pin, wpi.modes.OUTPUT);
+wpi.pinMode(ms3_pin, wpi.modes.OUTPUT);
+
+var microstep = {1:[0,0,0], 2:[1,0,0], 4:[0,1,0], 8:[1,1,0], 16:[1,1,1]};
+
+var step_resolution = 16; // may be 1, 2, 4, 8, 16
+
+wpi.digitalWrite(ms1_pin,microstep[step_resolution][0]);
+wpi.digitalWrite(ms2_pin,microstep[step_resolution][1]);
+wpi.digitalWrite(ms3_pin,microstep[step_resolution][2]);
+
+wpi.digitalWrite(enable_pin,1);
+
+wpi.digitalWrite(reset_pin,1);
+wpi.digitalWrite(sleep_pin,1);
+wpi.digitalWrite(direction_pin,1);
+
+var pwm_top = 128;
+var pwm_div = 31;
+
+wpi.pinMode(step_pin,2);
+wpi.pwmSetMode(0); //0=mark:space 1=balanced
+wpi.pwmSetRange(pwm_top); // set pwm top to 1024
+wpi.pwmSetClock(pwm_div); //set clock divisor to 
+wpi.pwmWrite(step_pin,pwm_top/2); // set pwm to 50%
+
 
 // ----------------------------------------------------------------------------
 // Start webserver
@@ -151,12 +192,15 @@ io.sockets.on('connection', function (socket) {
 			wpi.digitalWrite(pin2, 0);
 			wpi.digitalWrite(pin3, 0);
 			wpi.digitalWrite(pin4, 0);
+			wpi.digitalWrite(enable_pin,1);
 		} else {
 			setServoAngle(0,90);
 			wpi.digitalWrite(pin1, 1);
 			wpi.digitalWrite(pin2, 0);
 			wpi.digitalWrite(pin3, 1);
 			wpi.digitalWrite(pin4, 0);
+			wpi.digitalWrite(direction_pin,1);
+			wpi.digitalWrite(enable_pin,0);
 		}
 	}
 	if (data.direction=="backward") {
@@ -165,12 +209,16 @@ io.sockets.on('connection', function (socket) {
 			wpi.digitalWrite(pin2, 0);
 			wpi.digitalWrite(pin3, 0);
 			wpi.digitalWrite(pin4, 0);
+			wpi.digitalWrite(enable_pin,1);
 		} else {
 			wpi.digitalWrite(pin1, 0);
 			wpi.digitalWrite(pin2, 1);
 			wpi.digitalWrite(pin3, 0);
 			wpi.digitalWrite(pin4, 1);
+			wpi.digitalWrite(direction_pin,0);
+			wpi.digitalWrite(enable_pin,0);
 		}
 	}
   });
+
 });
