@@ -22,6 +22,27 @@
 	left: 0px;
 }
 
+#right_buttons {
+    width: 48%;
+    height: 50%;
+    padding: 0px;
+    margin: 0px;
+    background-color: green;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+#left_buttons {
+    width: 48%;
+    height: 50%;
+    padding: 0px;
+    margin: 0px;
+    background-color: red;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
 #joystick_up {
     width: 34%;
 	height: 50%;
@@ -64,9 +85,9 @@
 }
 
 </style>
-<script src="js/jquery-2.1.1.min.js"></script>
-<script src="js/jquery.mobile-1.4.3.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.3.3.js"></script>
 <script>
 
 $(document).ready(function(){
@@ -154,6 +175,14 @@ $(document).keyup(function(event){
 	<div id="joystick_down"></div>
 </div>
 
+<div id="right_buttons">
+	<div id="joystick_up"></div>
+	<div id="joystick_down"></div>
+</div>
+<div id="left_buttons">
+	<div id="joystick_right"></div>
+	<div id="joystick_left"></div>
+</div>
 
 <script>
 
@@ -184,6 +213,8 @@ $( "#right_thumb #joystick_right" ).bind("vmouseup",function() {
     socket.emit('button update event', { direction: 'right_thumb_right', speed: 80 });
   });
 
+
+
 $( "#left_thumb #joystick_up" ).bind("vmouseup",function() {
     console.log("Forward 0");
     socket.emit('button update event', { direction: 'left_thumb_forward', speed: 0 });
@@ -209,6 +240,39 @@ $( "#left_thumb #joystick_right" ).bind("vmouseup",function() {
   })
   .bind("vmousedown",function() {
     socket.emit('button update event', { direction: 'left_thumb_right', speed: 80 });
+  });
+
+
+
+
+$( "#right_buttons #joystick_up" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'right_buttons_up', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+    console.log("Right Buttons Up");
+    socket.emit('button update event', { direction: 'right_buttons_up', speed: 80 });
+  });
+$( "#right_buttons #joystick_down" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'right_buttons_down', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+    console.log("Right Buttons Down");
+    socket.emit('button update event', { direction: 'right_buttons_down', speed: 80 });
+  });
+  
+$( "#left_buttons #joystick_left" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'left_buttons_left', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+    onsole.log("Right Buttons Left");
+    socket.emit('button update event', { direction: 'left_buttons_left', speed: 80 });
+  });
+$( "#left_buttons #joystick_right" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'left_buttons_right', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+    console.log("Right Buttons Right");
+    socket.emit('button update event', { direction: 'left_buttons_right', speed: 80 });
   });
 </script>
 </body>
