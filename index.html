@@ -1,46 +1,68 @@
 <html>
 <head>
 <style>
-#forward {
-    width: 40%;
+#right_thumb {
+    width: 48%;
 	height: 50%;
     padding: 0px;
     margin: 0px;
 	background-color: green;
 	position: absolute;
-	top: 0px;
-	left: 30%;
+	bottom: 0px;
+	right: 0px;
 }
-#backward {
-    width: 40%;
+#left_thumb {
+    width: 48%;
 	height: 50%;
     padding: 0px;
     margin: 0px;
 	background-color: red;
 	position: absolute;
-	top: 50%;
-	left: 30%;
-}
-#left {
-    width: 30%;
-	height: 100%;
-    padding: 0px;
-    margin: 0px;
-	background-color: blue;
-	position: absolute;
-	top: 0px;
+	bottom: 0px;
 	left: 0px;
 }
-#right {
-    width: 30%;
-	height: 100%;
+
+#joystick_up {
+    width: 34%;
+	height: 50%;
+    padding: 0px;
+    margin: 0px;
+	background-color: black;
+	position: absolute;
+	top: 0px;
+	right: 33%;
+}
+#joystick_down {
+    width: 34%;
+	height: 50%;
+    padding: 0px;
+    margin: 0px;
+	background-color: gray;
+	position: absolute;
+	bottom: 0px;
+	right: 33%;
+}
+#joystick_left {
+    width: 33%;
+	height: 50%;
     padding: 0px;
     margin: 0px;
 	background-color: blue;
 	position: absolute;
-	top: 0px;
-	left: 70%;
+	top: 25%;
+	left: 0px;
 }
+#joystick_right {
+    width: 33%;
+	height: 50%;
+    padding: 0px;
+    margin: 0px;
+	background-color: yellow;
+	position: absolute;
+	top: 25%;
+	right: 0px;
+}
+
 </style>
 <script src="js/jquery-2.1.1.min.js"></script>
 <script src="js/jquery.mobile-1.4.3.min.js"></script>
@@ -119,36 +141,74 @@ $(document).keyup(function(event){
 
 <body>
 
-<div id="right"></div>
-<div id="forward"></div>
-<div id="backward"></div>
-<div id="left"></div>
+<div id="right_thumb">
+	<div id="joystick_right"></div>
+	<div id="joystick_left"></div>
+	<div id="joystick_up"></div>
+	<div id="joystick_down"></div>
+</div>
+<div id="left_thumb">
+	<div id="joystick_right"></div>
+	<div id="joystick_left"></div>
+	<div id="joystick_up"></div>
+	<div id="joystick_down"></div>
+</div>
+
 
 <script>
 
-$( "#forward" ).bind("vmouseup",function() {
-    socket.emit('button update event', { direction: 'forward', speed: 0 });
+$( "#right_thumb #joystick_up" ).bind("vmouseup",function() {
+    console.log("Forward 0");
+    socket.emit('button update event', { direction: 'right_thumb_forward', speed: 0 });
   })
-  .bind("vmousedown",function() {
-	socket.emit('button update event', { direction: 'forward', speed: 80 });
+    .bind("vmousedown",function() {
+    console.log("Forward 80");
+    socket.emit('button update event', { direction: 'right_thumb_forward', speed: 80 });
   });
-$( "#backward" ).bind("vmouseup",function() {
-    socket.emit('button update event', { direction: 'backward', speed: 0 });
+$( "#right_thumb #joystick_down" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'right_thumb_backward', speed: 0 });
   })
-  .bind("vmousedown",function() {
-	socket.emit('button update event', { direction: 'backward', speed: 80 });
+    .bind("vmousedown",function() {
+    socket.emit('button update event', { direction: 'right_thumb_backward', speed: 80 });
   });
-$( "#left" ).bind("vmouseup",function() {
-    socket.emit('button update event', { direction: 'left', speed: 0 });
+$( "#right_thumb #joystick_left" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'right_thumb_left', speed: 0 });
   })
-  .bind("vmousedown",function() {
-	socket.emit('button update event', { direction: 'left', speed: 80 });
+    .bind("vmousedown",function() {
+    socket.emit('button update event', { direction: 'right_thumb_left', speed: 80 });
   });
-$( "#right" ).bind("vmouseup",function() {
-    socket.emit('button update event', { direction: 'right', speed: 0 });
+$( "#right_thumb #joystick_right" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'right_thumb_right', speed: 0 });
+  })
+    .bind("vmousedown",function() {
+    socket.emit('button update event', { direction: 'right_thumb_right', speed: 80 });
+  });
+
+$( "#left_thumb #joystick_up" ).bind("vmouseup",function() {
+    console.log("Forward 0");
+    socket.emit('button update event', { direction: 'left_thumb_forward', speed: 0 });
   })
   .bind("vmousedown",function() {
-	socket.emit('button update event', { direction: 'right', speed: 80 });
+    console.log("Forward 80");
+    socket.emit('button update event', { direction: 'left_thumb_forward', speed: 80 });
+  });
+$( "#left_thumb #joystick_down" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'left_thumb_backward', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+    socket.emit('button update event', { direction: 'left_thumb_backward', speed: 80 });
+  });
+$( "#left_thumb #joystick_left" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'left_thumb_left', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+    socket.emit('button update event', { direction: 'left_thumb_left', speed: 80 });
+  });
+$( "#left_thumb #joystick_right" ).bind("vmouseup",function() {
+    socket.emit('button update event', { direction: 'left_thumb_right', speed: 0 });
+  })
+  .bind("vmousedown",function() {
+    socket.emit('button update event', { direction: 'left_thumb_right', speed: 80 });
   });
 </script>
 </body>
